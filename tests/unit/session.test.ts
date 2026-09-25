@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { SessionManager } from '../../src/server/transport/session.js'
 
 let manager: SessionManager
@@ -23,6 +23,16 @@ describe('SessionManager', () => {
     manager.createSession(bootstrap)
     const second = manager.createSession(bootstrap)
     expect(second).toBeNull()
+  })
+
+  it('rejects bootstrap token after TTL expires', () => {
+    vi.useFakeTimers()
+    const freshManager = new SessionManager()
+    const { token: bootstrap } = freshManager.generateBootstrapCredential()
+    vi.advanceTimersByTime(61_000)
+    const result = freshManager.createSession(bootstrap)
+    expect(result).toBeNull()
+    vi.useRealTimers()
   })
 
   it('validates a session token', () => {

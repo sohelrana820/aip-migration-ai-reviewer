@@ -4,5 +4,9 @@ export default defineConfig({
   root: 'src/ui',
   plugins: [react()],
   build: { outDir: '../../dist/ui', emptyOutDir: true },
-  server: { proxy: { '/api': 'http://127.0.0.1:3000', '/events': 'http://127.0.0.1:3000' } }
+  server: { proxy: {
+    '/api': 'http://127.0.0.1:3000',
+    '/auth': 'http://127.0.0.1:3000',
+    '/events': 'http://127.0.0.1:3000'
+  } }
 })

@@ -2,16 +2,21 @@ import { randomBytes } from 'crypto'
 
 export class SessionManager {
   private bootstrapToken: string | null = null
+  private bootstrapExpiry: number = 0
   private sessions = new Set<string>()
 
   generateBootstrapCredential(): { token: string; expiresAt: Date } {
     this.bootstrapToken = randomBytes(32).toString('hex')
-    const expiresAt = new Date(Date.now() + 60_000) // 60 s validity
-    return { token: this.bootstrapToken, expiresAt }
+    this.bootstrapExpiry = Date.now() + 60_000
+    return { token: this.bootstrapToken, expiresAt: new Date(this.bootstrapExpiry) }
   }
 
   createSession(bootstrapToken: string): { sessionToken: string } | null {
     if (!this.bootstrapToken || bootstrapToken !== this.bootstrapToken) return null
+    if (Date.now() > this.bootstrapExpiry) {
+      this.bootstrapToken = null
+      return null
+    }
     this.bootstrapToken = null  // single-use
     const sessionToken = randomBytes(32).toString('hex')
     this.sessions.add(sessionToken)
