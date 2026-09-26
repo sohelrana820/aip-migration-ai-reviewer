@@ -7,7 +7,7 @@ export class SessionManager {
 
   generateBootstrapCredential(): { token: string; expiresAt: Date } {
     this.bootstrapToken = randomBytes(32).toString('hex')
-    this.bootstrapExpiry = Date.now() + 60_000
+    this.bootstrapExpiry = Date.now() + 300_000
     return { token: this.bootstrapToken, expiresAt: new Date(this.bootstrapExpiry) }
   }
 

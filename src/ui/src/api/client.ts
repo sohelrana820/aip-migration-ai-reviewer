@@ -1,7 +1,14 @@
 const BASE = '/api'
 let sessionToken: string | null = null
+let bootstrapPromise: Promise<boolean> | null = null
 
-export async function bootstrap(): Promise<boolean> {
+export function bootstrap(): Promise<boolean> {
+  if (sessionToken) return Promise.resolve(true)
+  if (!bootstrapPromise) bootstrapPromise = doBootstrap()
+  return bootstrapPromise
+}
+
+async function doBootstrap(): Promise<boolean> {
   const params = new URLSearchParams(window.location.search)
   const bootstrapToken = params.get('bootstrap')
   if (!bootstrapToken) return false
